@@ -32,7 +32,7 @@ func GetConfig() *Config {
 		envPath := filepath.Join(parentDir, ".env")
 
 		if err := godotenv.Load(envPath); err != nil {
-			log.Fatalf("Error loading .env file: %v", err)
+			log.Printf("Warning error loading .env file: %v", err)
 		}
 
 		if err := env.Parse(&cfg); err != nil {
