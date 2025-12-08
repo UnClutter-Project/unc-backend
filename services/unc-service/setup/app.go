@@ -10,6 +10,7 @@ import (
 	"unc/services/unc-service/application/service"
 	"unc/services/unc-service/config"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -35,7 +36,7 @@ func NewApp() *App {
 	db := setupDB(ctx)
 	repository := setupRepository(db)
 	services := service.SetupServices(repository)
-	controllers := controller.SetupControllers(services)
+	controllers := controller.SetupControllers(services, validator.New())
 	router.SetupRoutes(app, controllers)
 
 	return &App{
