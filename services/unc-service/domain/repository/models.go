@@ -5,8 +5,54 @@
 package repository
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type GenderType string
+
+const (
+	GenderTypeMale           GenderType = "male"
+	GenderTypeFemale         GenderType = "female"
+	GenderTypePreferNotToSay GenderType = "prefer_not_to_say"
+)
+
+func (e *GenderType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GenderType(s)
+	case string:
+		*e = GenderType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GenderType: %T", src)
+	}
+	return nil
+}
+
+type NullGenderType struct {
+	GenderType GenderType `json:"gender_type"`
+	Valid      bool       `json:"valid"` // Valid is true if GenderType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGenderType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GenderType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GenderType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGenderType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GenderType), nil
+}
 
 type Users struct {
 	ID         pgtype.UUID        `json:"id"`
@@ -16,4 +62,6 @@ type Users struct {
 	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
 	IsVerified pgtype.Bool        `json:"is_verified"`
+	Gender     NullGenderType     `json:"gender"`
+	Dob        pgtype.Date        `json:"dob"`
 }
