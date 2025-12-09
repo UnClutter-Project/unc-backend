@@ -31,7 +31,6 @@ func (s *AuthServiceImpl) Register(ctx context.Context, request *request.Registe
 		Email:    request.Email,
 	})
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		// TODO: Handle error 400 for
 		return err
 	}
 
