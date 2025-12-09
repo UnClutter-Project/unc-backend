@@ -7,11 +7,11 @@ import (
 	"unc/services/unc-service/config"
 	"unc/services/unc-service/domain/repository"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func setupDB(ctx context.Context) repository.DBTX {
-	conn, err := pgx.Connect(ctx, fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+	conn, err := pgxpool.New(ctx, fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.GetConfig().DatabaseUser,
 		config.GetConfig().DatabasePassword,
 		config.GetConfig().DatabaseHost,
@@ -21,12 +21,6 @@ func setupDB(ctx context.Context) repository.DBTX {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
-	defer func(conn *pgx.Conn, ctx context.Context) {
-		err = conn.Close(ctx)
-		if err != nil {
-			log.Fatalf("Unable to close connection: %v", err)
-		}
-	}(conn, ctx)
 
 	return conn
 }
