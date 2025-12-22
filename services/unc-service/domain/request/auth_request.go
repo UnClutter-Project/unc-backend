@@ -12,3 +12,8 @@ type RegisterRequest struct {
 	Gender   repository.GenderType `json:"gender" validate:"required"`
 	DOB      time.Time             `json:"dob" validate:"required"`
 }
+
+type LoginRequest struct {
+	Username string `json:"username" validate:"required,min=4,max=32"`
+	Password string `json:"password" validate:"required,min=8,max=128"`
+}

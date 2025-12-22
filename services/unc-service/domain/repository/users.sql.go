@@ -48,6 +48,28 @@ func (q *Queries) CreateUser(ctx context.Context, arg *CreateUserParams) (*Users
 	return &i, err
 }
 
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, username, email, password, created_at, updated_at, is_verified, gender, dob FROM users
+WHERE username = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (*Users, error) {
+	row := q.db.QueryRow(ctx, getUserByUsername, username)
+	var i Users
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.IsVerified,
+		&i.Gender,
+		&i.Dob,
+	)
+	return &i, err
+}
+
 const getUserByUsernameAndEmail = `-- name: GetUserByUsernameAndEmail :one
 SELECT id, username, email, password, created_at, updated_at, is_verified, gender, dob FROM users
 WHERE username = $1 OR email = $2 LIMIT 1
@@ -60,6 +82,33 @@ type GetUserByUsernameAndEmailParams struct {
 
 func (q *Queries) GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error) {
 	row := q.db.QueryRow(ctx, getUserByUsernameAndEmail, arg.Username, arg.Email)
+	var i Users
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.IsVerified,
+		&i.Gender,
+		&i.Dob,
+	)
+	return &i, err
+}
+
+const getUserByUsernameAndPassword = `-- name: GetUserByUsernameAndPassword :one
+SELECT id, username, email, password, created_at, updated_at, is_verified, gender, dob FROM users
+WHERE username = $1 AND password = $2 LIMIT 1
+`
+
+type GetUserByUsernameAndPasswordParams struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (q *Queries) GetUserByUsernameAndPassword(ctx context.Context, arg *GetUserByUsernameAndPasswordParams) (*Users, error) {
+	row := q.db.QueryRow(ctx, getUserByUsernameAndPassword, arg.Username, arg.Password)
 	var i Users
 	err := row.Scan(
 		&i.ID,

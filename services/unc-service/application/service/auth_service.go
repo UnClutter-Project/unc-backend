@@ -13,6 +13,7 @@ import (
 
 type AuthService interface {
 	Register(ctx context.Context, request *request.RegisterRequest) error
+	Login(ctx context.Context, request *request.LoginRequest) (string, error)
 }
 
 type AuthServiceImpl struct {
@@ -51,4 +52,24 @@ func (s *AuthServiceImpl) Register(ctx context.Context, request *request.Registe
 	}
 
 	return nil
+}
+
+func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginRequest) (string, error) {
+	user, err := s.repository.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return "", err
+	}
+
+	err = helper.ComparePassword(user.Password, request.Password)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := helper.GenerateToken(user.ID.String())
+
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
