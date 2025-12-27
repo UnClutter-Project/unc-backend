@@ -7,10 +7,6 @@ INSERT INTO users (username, email, password, gender, dob)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
--- name: GetUserByUsernameAndPassword :one
-SELECT * FROM users
-WHERE username = $1 AND password = $2 LIMIT 1;
-
 -- name: GetUserByUsername :one
 SELECT * FROM users
 WHERE username = $1 LIMIT 1;

@@ -96,30 +96,3 @@ func (q *Queries) GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByU
 	)
 	return &i, err
 }
-
-const getUserByUsernameAndPassword = `-- name: GetUserByUsernameAndPassword :one
-SELECT id, username, email, password, created_at, updated_at, is_verified, gender, dob FROM users
-WHERE username = $1 AND password = $2 LIMIT 1
-`
-
-type GetUserByUsernameAndPasswordParams struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-func (q *Queries) GetUserByUsernameAndPassword(ctx context.Context, arg *GetUserByUsernameAndPasswordParams) (*Users, error) {
-	row := q.db.QueryRow(ctx, getUserByUsernameAndPassword, arg.Username, arg.Password)
-	var i Users
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.Password,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.IsVerified,
-		&i.Gender,
-		&i.Dob,
-	)
-	return &i, err
-}
