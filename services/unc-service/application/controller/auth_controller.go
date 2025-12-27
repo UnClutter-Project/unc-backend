@@ -11,6 +11,7 @@ import (
 
 type AuthController interface {
 	Register(c *fiber.Ctx) error
+	Login(c *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -48,5 +49,33 @@ func (s *AuthControllerImpl) Register(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": fmt.Sprintf("Created user %s", registerRequest.Username),
+	})
+}
+
+func (s *AuthControllerImpl) Login(c *fiber.Ctx) error {
+	var loginRequest request.LoginRequest
+
+	if err := c.BodyParser(&loginRequest); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if err := s.validator.StructCtx(c.Context(), &loginRequest); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	token, err := s.authService.Login(c.Context(), &loginRequest)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": fmt.Sprintf("Login successful, Welcome %s", loginRequest.Username),
+		"token":   token,
 	})
 }

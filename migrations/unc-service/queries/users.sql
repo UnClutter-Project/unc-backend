@@ -6,3 +6,7 @@ WHERE username = $1 OR email = $2 LIMIT 1;
 INSERT INTO users (username, email, password, gender, dob)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
+
+-- name: GetUserByUsername :one
+SELECT * FROM users
+WHERE username = $1 LIMIT 1;
