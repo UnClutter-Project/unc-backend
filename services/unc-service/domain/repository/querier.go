@@ -13,6 +13,7 @@ type Querier interface {
 	GetUserByUsername(ctx context.Context, username string) (*Users, error)
 	GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error)
 	GetValidOTPByUsernameAndToken(ctx context.Context, arg *GetValidOTPByUsernameAndTokenParams) (*Otp, error)
+	SetIsVerifiedByUsername(ctx context.Context, arg *SetIsVerifiedByUsernameParams) (*Users, error)
 }
 
 var _ Querier = (*Queries)(nil)

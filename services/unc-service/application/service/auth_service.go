@@ -89,5 +89,13 @@ func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyReq
 		return err
 	}
 
+	_, err = s.repository.SetIsVerifiedByUsername(ctx, &repository.SetIsVerifiedByUsernameParams{
+		IsVerified: true,
+		Username:   request.Username,
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
