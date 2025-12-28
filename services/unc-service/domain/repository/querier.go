@@ -12,6 +12,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg *CreateUserParams) (*Users, error)
 	GetUserByUsername(ctx context.Context, username string) (*Users, error)
 	GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error)
+	GetValidOTPByUsernameAndToken(ctx context.Context, arg *GetValidOTPByUsernameAndTokenParams) (*Otp, error)
 }
 
 var _ Querier = (*Queries)(nil)
