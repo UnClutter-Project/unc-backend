@@ -10,8 +10,8 @@ import (
 )
 
 type AuthController interface {
-	Register(c *fiber.Ctx) error
-	Login(c *fiber.Ctx) error
+	Register(ctx *fiber.Ctx) error
+	Login(ctx *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -26,55 +26,55 @@ func NewAuthController(authService service.AuthService, validator *validator.Val
 	}
 }
 
-func (s *AuthControllerImpl) Register(c *fiber.Ctx) error {
+func (c *AuthControllerImpl) Register(ctx *fiber.Ctx) error {
 	var registerRequest request.RegisterRequest
 
-	if err := c.BodyParser(&registerRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err := ctx.BodyParser(&registerRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	if err := s.validator.StructCtx(c.Context(), &registerRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err := c.validator.StructCtx(ctx.Context(), &registerRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	if err := s.authService.Register(c.Context(), &registerRequest); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	if err := c.authService.Register(ctx.Context(), &registerRequest); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": fmt.Sprintf("Created user %s", registerRequest.Username),
 	})
 }
 
-func (s *AuthControllerImpl) Login(c *fiber.Ctx) error {
+func (c *AuthControllerImpl) Login(ctx *fiber.Ctx) error {
 	var loginRequest request.LoginRequest
 
-	if err := c.BodyParser(&loginRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err := ctx.BodyParser(&loginRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	if err := s.validator.StructCtx(c.Context(), &loginRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	if err := c.validator.StructCtx(ctx.Context(), &loginRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	token, err := s.authService.Login(c.Context(), &loginRequest)
+	token, err := c.authService.Login(ctx.Context(), &loginRequest)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": fmt.Sprintf("Login successful, Welcome %s", loginRequest.Username),
 		"token":   token,
 	})
