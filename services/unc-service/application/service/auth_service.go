@@ -14,6 +14,7 @@ import (
 type AuthService interface {
 	Register(ctx context.Context, request *request.RegisterRequest) error
 	Login(ctx context.Context, request *request.LoginRequest) (string, error)
+	Verify(ctx context.Context, request *request.VerifyRequest) error
 }
 
 type AuthServiceImpl struct {
@@ -72,4 +73,21 @@ func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginReque
 	}
 
 	return token, nil
+}
+
+func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyRequest) error {
+	user, err := s.repository.GetUserByUsername(ctx, request.Username)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.repository.GetValidOTPByUsernameAndToken(ctx, &repository.GetValidOTPByUsernameAndTokenParams{
+		UserID: user.ID,
+		Token:  request.Token,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -11,4 +11,5 @@ func setupAuthRoutes(api fiber.Router, authController controller.AuthController)
 
 	users.Post("/register", authController.Register)
 	users.Post("/login", authController.Login)
+	users.Post("/verify", authController.Verify)
 }

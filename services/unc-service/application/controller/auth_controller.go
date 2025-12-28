@@ -12,6 +12,7 @@ import (
 type AuthController interface {
 	Register(ctx *fiber.Ctx) error
 	Login(ctx *fiber.Ctx) error
+	Verify(ctx *fiber.Ctx) error
 }
 
 type AuthControllerImpl struct {
@@ -48,7 +49,7 @@ func (c *AuthControllerImpl) Register(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": fmt.Sprintf("Created user %s", registerRequest.Username),
+		"message": fmt.Sprintf("Check registered email for user %s", registerRequest.Username),
 	})
 }
 
@@ -77,5 +78,31 @@ func (c *AuthControllerImpl) Login(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": fmt.Sprintf("Login successful, Welcome %s", loginRequest.Username),
 		"token":   token,
+	})
+}
+
+func (c *AuthControllerImpl) Verify(ctx *fiber.Ctx) error {
+	var verifyRequest request.VerifyRequest
+
+	if err := ctx.BodyParser(&verifyRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	if err := c.validator.StructCtx(ctx.Context(), &verifyRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err := c.authService.Verify(ctx.Context(), &verifyRequest)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": fmt.Sprintf("User %s has been verified", verifyRequest.Username),
 	})
 }
