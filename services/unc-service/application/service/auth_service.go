@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
+	"unc/services/unc-service/application/client"
 	"unc/services/unc-service/application/helper"
 	"unc/services/unc-service/domain/repository"
 	"unc/services/unc-service/domain/request"
@@ -18,12 +20,14 @@ type AuthService interface {
 }
 
 type AuthServiceImpl struct {
-	repository repository.Querier
+	repository  repository.Querier
+	emailClient client.EmailClient
 }
 
-func NewAuthService(repository repository.Querier) AuthService {
+func NewAuthService(repository repository.Querier, emailClient client.EmailClient) AuthService {
 	return &AuthServiceImpl{
-		repository: repository,
+		repository:  repository,
+		emailClient: emailClient,
 	}
 }
 
@@ -41,13 +45,18 @@ func (s *AuthServiceImpl) Register(ctx context.Context, request *request.Registe
 		return err
 	}
 
-	_, err = s.repository.CreateUser(ctx, &repository.CreateUserParams{
+	user, err := s.repository.CreateUser(ctx, &repository.CreateUserParams{
 		Username: request.Username,
 		Email:    request.Email,
 		Password: hashedPassword,
 		Gender:   request.Gender,
 		Dob:      pgtype.Date{Time: request.DOB, Valid: true},
 	})
+	if err != nil {
+		return err
+	}
+
+	err = s.sendOTP(ctx, user)
 	if err != nil {
 		return err
 	}
@@ -81,9 +90,9 @@ func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyReq
 		return err
 	}
 
-	_, err = s.repository.GetValidOTPByUsernameAndToken(ctx, &repository.GetValidOTPByUsernameAndTokenParams{
+	_, err = s.repository.GetValidOTPByUsernameAndCode(ctx, &repository.GetValidOTPByUsernameAndCodeParams{
 		UserID: user.ID,
-		Token:  request.Token,
+		Code:   request.Code,
 	})
 	if err != nil {
 		return err
@@ -93,6 +102,25 @@ func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyReq
 		IsVerified: true,
 		Username:   request.Username,
 	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AuthServiceImpl) sendOTP(ctx context.Context, user *repository.Users) error {
+	code, err := helper.GenerateOTPCode()
+	if err != nil {
+		return err
+	}
+
+	_, err = s.repository.CreateOTP(ctx, &repository.CreateOTPParams{
+		UserID: user.ID,
+		Code:   code,
+	})
+
+	err = s.emailClient.SendOTP(ctx, user.Email, user.Email, fmt.Sprintf("Take it or leave it: %s", code))
 	if err != nil {
 		return err
 	}

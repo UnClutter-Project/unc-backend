@@ -20,5 +20,5 @@ type LoginRequest struct {
 
 type VerifyRequest struct {
 	Username string `json:"username" validate:"required,min=4,max=32"`
-	Token    string `json:"token" validate:"required,len=6"`
+	Code     string `json:"code" validate:"required,len=6"`
 }

@@ -11,23 +11,48 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getValidOTPByUsernameAndToken = `-- name: GetValidOTPByUsernameAndToken :one
-SELECT id, user_id, token, created_at, updated_at, expired_at FROM otp
-WHERE user_id = $1 AND token = $2 AND expired_at > NOW() LIMIT 1
+const createOTP = `-- name: CreateOTP :one
+INSERT INTO otp (user_id, code)
+VALUES ($1, $2)
+RETURNING id, user_id, code, created_at, updated_at, expired_at
 `
 
-type GetValidOTPByUsernameAndTokenParams struct {
+type CreateOTPParams struct {
 	UserID pgtype.UUID `json:"user_id"`
-	Token  string      `json:"token"`
+	Code   string      `json:"code"`
 }
 
-func (q *Queries) GetValidOTPByUsernameAndToken(ctx context.Context, arg *GetValidOTPByUsernameAndTokenParams) (*Otp, error) {
-	row := q.db.QueryRow(ctx, getValidOTPByUsernameAndToken, arg.UserID, arg.Token)
+func (q *Queries) CreateOTP(ctx context.Context, arg *CreateOTPParams) (*Otp, error) {
+	row := q.db.QueryRow(ctx, createOTP, arg.UserID, arg.Code)
 	var i Otp
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
-		&i.Token,
+		&i.Code,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ExpiredAt,
+	)
+	return &i, err
+}
+
+const getValidOTPByUsernameAndCode = `-- name: GetValidOTPByUsernameAndCode :one
+SELECT id, user_id, code, created_at, updated_at, expired_at FROM otp
+WHERE user_id = $1 AND code = $2 AND expired_at > NOW() LIMIT 1
+`
+
+type GetValidOTPByUsernameAndCodeParams struct {
+	UserID pgtype.UUID `json:"user_id"`
+	Code   string      `json:"code"`
+}
+
+func (q *Queries) GetValidOTPByUsernameAndCode(ctx context.Context, arg *GetValidOTPByUsernameAndCodeParams) (*Otp, error) {
+	row := q.db.QueryRow(ctx, getValidOTPByUsernameAndCode, arg.UserID, arg.Code)
+	var i Otp
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Code,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ExpiredAt,
