@@ -96,3 +96,31 @@ func (q *Queries) GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByU
 	)
 	return &i, err
 }
+
+const setIsVerifiedByUsername = `-- name: SetIsVerifiedByUsername :one
+UPDATE users SET is_verified = $1
+WHERE username = $2
+RETURNING id, username, email, password, created_at, updated_at, is_verified, gender, dob
+`
+
+type SetIsVerifiedByUsernameParams struct {
+	IsVerified bool   `json:"is_verified"`
+	Username   string `json:"username"`
+}
+
+func (q *Queries) SetIsVerifiedByUsername(ctx context.Context, arg *SetIsVerifiedByUsernameParams) (*Users, error) {
+	row := q.db.QueryRow(ctx, setIsVerifiedByUsername, arg.IsVerified, arg.Username)
+	var i Users
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.IsVerified,
+		&i.Gender,
+		&i.Dob,
+	)
+	return &i, err
+}

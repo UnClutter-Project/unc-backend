@@ -17,3 +17,8 @@ type LoginRequest struct {
 	Username string `json:"username" validate:"required,min=4,max=32"`
 	Password string `json:"password" validate:"required,min=8,max=128"`
 }
+
+type VerifyRequest struct {
+	Username string `json:"username" validate:"required,min=4,max=32"`
+	Code     string `json:"code" validate:"required,len=6"`
+}

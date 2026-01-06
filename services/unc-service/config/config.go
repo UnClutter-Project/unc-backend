@@ -17,6 +17,7 @@ type Config struct {
 	DatabaseName     string `env:"DATABASE_NAME" envDefault:"unc_db"`
 	DatabaseUser     string `env:"DATABASE_USER" envDefault:"postgres"`
 	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
+	BrevoAPIKey      string `env:"BREVO_API_KEY" envDefault:""`
 }
 
 var (
