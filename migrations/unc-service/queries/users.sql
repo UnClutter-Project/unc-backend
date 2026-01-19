@@ -9,4 +9,13 @@ RETURNING *;
 
 -- name: GetUserByUsername :one
 SELECT * FROM users
+<<<<<<< HEAD
 WHERE username = $1 LIMIT 1;
+=======
+WHERE username = $1 LIMIT 1;
+
+-- name: SetIsVerifiedByUsername :one
+UPDATE users SET is_verified = $1
+WHERE username = $2
+RETURNING *;
+>>>>>>> 33d87161295dd48ec2ee2666b4bc36132b215f81

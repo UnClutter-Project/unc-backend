@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"unc/services/unc-service/application/client"
 	"unc/services/unc-service/application/controller"
 	"unc/services/unc-service/application/router"
 	"unc/services/unc-service/application/service"
@@ -35,7 +36,8 @@ func NewApp() *App {
 
 	db := setupDB(ctx)
 	repository := setupRepository(db)
-	services := service.SetupServices(repository)
+	clients := client.SetupClients()
+	services := service.SetupServices(repository, clients)
 	controllers := controller.SetupControllers(services, validator.New())
 	router.SetupRoutes(app, controllers)
 

@@ -54,6 +54,15 @@ func (ns NullGenderType) Value() (driver.Value, error) {
 	return string(ns.GenderType), nil
 }
 
+type Otp struct {
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	Code      string             `json:"code"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	ExpiredAt pgtype.Timestamptz `json:"expired_at"`
+}
+
 type Users struct {
 	ID         pgtype.UUID        `json:"id"`
 	Username   string             `json:"username"`
