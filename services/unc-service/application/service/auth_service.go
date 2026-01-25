@@ -15,8 +15,10 @@ import (
 
 type AuthService interface {
 	Register(ctx context.Context, request *request.RegisterRequest) error
-	Login(ctx context.Context, request *request.LoginRequest) (string, error)
+	Login(ctx context.Context, request *request.LoginRequest) (string, string, error)
 	Verify(ctx context.Context, request *request.VerifyRequest) error
+	Refresh(ctx context.Context, request *request.RefreshRequest) (string, string, error)
+	// Logout(ctx context.Context) error
 }
 
 type AuthServiceImpl struct {
@@ -64,24 +66,35 @@ func (s *AuthServiceImpl) Register(ctx context.Context, request *request.Registe
 	return nil
 }
 
-func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginRequest) (string, error) {
+func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginRequest) (string, string, error) {
 	user, err := s.repository.GetUserByUsername(ctx, request.Username)
+
+	if user.IsVerified != true {
+		err = errors.New("Please verify your email")
+	}
+
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	err = helper.ComparePassword(user.Password, request.Password)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	token, err := helper.GenerateToken(user.ID.String())
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return token, nil
+	refresh_token, err := helper.GenerateRefreshToken(user.ID.String())
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return token, refresh_token, nil
 }
 
 func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyRequest) error {
@@ -128,22 +141,35 @@ func (s *AuthServiceImpl) sendOTP(ctx context.Context, user *repository.Users) e
 	return nil
 }
 
-func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginRequest) (string, error) {
-	user, err := s.repository.GetUserByUsername(ctx, request.Username)
+func (s *AuthServiceImpl) Refresh(ctx context.Context, request *request.RefreshRequest) (string, string, error) {
+
+	old_reftoken, err := helper.VerifyAndParseToken(request.RefreshToken)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	err = helper.ComparePassword(user.Password, request.Password)
-	if err != nil {
-		return "", err
+	user_id := helper.GetUserFromJwt(old_reftoken)
+	if user_id == "" {
+		return "", "", err
 	}
 
-	token, err := helper.GenerateToken(user.ID.String())
+	new_token, err := helper.GenerateToken(user_id)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return token, nil
+	new_refresh_token, err := helper.GenerateRefreshToken(user_id)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return new_token, new_refresh_token, nil
 }
+
+// func (s *AuthServiceImpl) Logout(ctx context.Context, request *request.RefreshRequest) error {
+// 	_, err = helper.VerifyToken(request.Token)
+
+// 	return nil
+// }

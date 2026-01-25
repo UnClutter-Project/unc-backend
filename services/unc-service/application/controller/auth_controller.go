@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"time"
 	"unc/services/unc-service/application/service"
 	"unc/services/unc-service/domain/request"
 
@@ -68,16 +69,35 @@ func (c *AuthControllerImpl) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	token, err := c.authService.Login(ctx.Context(), &loginRequest)
+	token, refresh_token, err := c.authService.Login(ctx.Context(), &loginRequest)
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    token,
+		Path:     "/",
+		Expires:  time.Now().Add(time.Hour),
+		Secure:   false,
+		HTTPOnly: true,
+	})
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refresh_token,
+		Path:     "/",
+		Expires:  time.Now().Add(time.Hour),
+		Secure:   false,
+		HTTPOnly: true,
+	})
+
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": fmt.Sprintf("Login successful, Welcome %s", loginRequest.Username),
-		"token":   token,
+		"message":       fmt.Sprintf("Login successful, Welcome %s", loginRequest.Username),
+		"token":         token,
+		"refresh_token": refresh_token,
 	})
 }
 
