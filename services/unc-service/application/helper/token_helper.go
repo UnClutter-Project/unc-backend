@@ -1,9 +1,11 @@
 package helper
 
 import (
+	"fmt"
 	"os"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -57,6 +59,7 @@ func generateJwt(claims jwt.MapClaims) (string, error) {
 }
 
 func GetUserFromJwt(token *jwt.Token) string {
+	fmt.Println(token)
 	claims := token.Claims.(jwt.MapClaims)
 	user_id, ok := claims["user_id"].(string) // Ensure the key matches your token generation
 	if !ok {
@@ -64,4 +67,9 @@ func GetUserFromJwt(token *jwt.Token) string {
 	}
 
 	return user_id
+}
+
+func GetTokenFromCtx(ctx *fiber.Ctx) *jwt.Token {
+	fmt.Println(ctx.Locals("user"))
+	return ctx.Locals("user").(*jwt.Token)
 }

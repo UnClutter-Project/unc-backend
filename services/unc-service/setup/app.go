@@ -32,7 +32,10 @@ func NewApp() *App {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost",
+		AllowCredentials: true, //Very important while using a HTTPonly Cookie, frontend can easily get and return back the cookie.
+	}))
 
 	db := setupDB(ctx)
 	repository := setupRepository(db)

@@ -18,7 +18,7 @@ type AuthService interface {
 	Login(ctx context.Context, request *request.LoginRequest) (string, string, error)
 	Verify(ctx context.Context, request *request.VerifyRequest) error
 	Refresh(ctx context.Context, request *request.RefreshRequest) (string, string, error)
-	// Logout(ctx context.Context) error
+	Logout(ctx context.Context, user_id string) error
 }
 
 type AuthServiceImpl struct {
@@ -69,6 +69,10 @@ func (s *AuthServiceImpl) Register(ctx context.Context, request *request.Registe
 func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginRequest) (string, string, error) {
 	user, err := s.repository.GetUserByUsername(ctx, request.Username)
 
+	if err != nil {
+		return "", "", err
+	}
+
 	if user.IsVerified != true {
 		err = errors.New("Please verify your email")
 	}
@@ -88,13 +92,13 @@ func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginReque
 		return "", "", err
 	}
 
-	refresh_token, err := helper.GenerateRefreshToken(user.ID.String())
+	refreshToken, err := helper.GenerateRefreshToken(user.ID.String())
 
 	if err != nil {
 		return "", "", err
 	}
 
-	return token, refresh_token, nil
+	return token, refreshToken, nil
 }
 
 func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyRequest) error {
@@ -143,33 +147,43 @@ func (s *AuthServiceImpl) sendOTP(ctx context.Context, user *repository.Users) e
 
 func (s *AuthServiceImpl) Refresh(ctx context.Context, request *request.RefreshRequest) (string, string, error) {
 
-	old_reftoken, err := helper.VerifyAndParseToken(request.RefreshToken)
+	oldReftoken, err := helper.VerifyAndParseToken(request.RefreshToken)
 	if err != nil {
 		return "", "", err
 	}
 
-	user_id := helper.GetUserFromJwt(old_reftoken)
+	user_id := helper.GetUserFromJwt(oldReftoken)
 	if user_id == "" {
 		return "", "", err
 	}
 
-	new_token, err := helper.GenerateToken(user_id)
+	newToken, err := helper.GenerateToken(user_id)
 
 	if err != nil {
 		return "", "", err
 	}
 
-	new_refresh_token, err := helper.GenerateRefreshToken(user_id)
+	newRefreshToken, err := helper.GenerateRefreshToken(user_id)
 
 	if err != nil {
 		return "", "", err
 	}
 
-	return new_token, new_refresh_token, nil
+	return newToken, newRefreshToken, nil
 }
 
-// func (s *AuthServiceImpl) Logout(ctx context.Context, request *request.RefreshRequest) error {
-// 	_, err = helper.VerifyToken(request.Token)
+func (s *AuthServiceImpl) Logout(ctx context.Context, user_id string) error {
+	if user_id == "" {
+		return errors.New("invalid user")
+	}
+	uuid := pgtype.UUID{}
+	if err := uuid.Scan(user_id); err != nil {
+		return err
+	}
+	_, err := s.repository.GetUserById(ctx, uuid)
 
-// 	return nil
-// }
+	if err != nil {
+		return err
+	}
+	return nil
+}

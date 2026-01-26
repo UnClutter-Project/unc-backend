@@ -14,6 +14,8 @@ require (
 
 require (
 	github.com/antihax/optional v1.0.0 // indirect
+	github.com/gofiber/jwt/v3 v3.3.10 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 )
 

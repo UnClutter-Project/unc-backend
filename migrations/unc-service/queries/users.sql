@@ -15,3 +15,7 @@ WHERE username = $1 LIMIT 1;
 UPDATE users SET is_verified = $1
 WHERE username = $2
 RETURNING *;
+
+-- name: GetUserById :one
+SELECT * FROM users
+WHERE id = $1 LIMIT 1;
