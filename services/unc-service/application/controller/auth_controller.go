@@ -185,14 +185,12 @@ func (c *AuthControllerImpl) Refresh(ctx *fiber.Ctx) error {
 
 func (c *AuthControllerImpl) Logout(ctx *fiber.Ctx) error {
 	token := ctx.Locals("user").(*jwt.Token)
-	fmt.Print(token)
 	if token == nil {
 		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": errors.New("invalid credentials"),
 		})
 	}
 	user_id := helper.GetUserFromJwt(token)
-	fmt.Println(user_id)
 	if err := c.authService.Logout(ctx.Context(), user_id); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
