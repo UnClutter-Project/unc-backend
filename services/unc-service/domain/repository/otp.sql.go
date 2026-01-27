@@ -36,18 +36,13 @@ func (q *Queries) CreateOTP(ctx context.Context, arg *CreateOTPParams) (*Otp, er
 	return &i, err
 }
 
-const getValidOTPByUsernameAndCode = `-- name: GetValidOTPByUsernameAndCode :one
+const getValidOTPByCode = `-- name: GetValidOTPByCode :one
 SELECT id, user_id, code, created_at, updated_at, expired_at FROM otp
-WHERE user_id = $1 AND code = $2 AND expired_at > NOW() LIMIT 1
+WHERE code = $1 AND expired_at > NOW() LIMIT 1
 `
 
-type GetValidOTPByUsernameAndCodeParams struct {
-	UserID pgtype.UUID `json:"user_id"`
-	Code   string      `json:"code"`
-}
-
-func (q *Queries) GetValidOTPByUsernameAndCode(ctx context.Context, arg *GetValidOTPByUsernameAndCodeParams) (*Otp, error) {
-	row := q.db.QueryRow(ctx, getValidOTPByUsernameAndCode, arg.UserID, arg.Code)
+func (q *Queries) GetValidOTPByCode(ctx context.Context, code string) (*Otp, error) {
+	row := q.db.QueryRow(ctx, getValidOTPByCode, code)
 	var i Otp
 	err := row.Scan(
 		&i.ID,

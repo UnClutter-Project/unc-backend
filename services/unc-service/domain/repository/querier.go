@@ -13,7 +13,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg *CreateUserParams) (*Users, error)
 	GetUserByUsername(ctx context.Context, username string) (*Users, error)
 	GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error)
-	GetValidOTPByUsernameAndCode(ctx context.Context, arg *GetValidOTPByUsernameAndCodeParams) (*Otp, error)
+	GetValidOTPByCode(ctx context.Context, code string) (*Otp, error)
 	SetIsVerifiedByUsername(ctx context.Context, arg *SetIsVerifiedByUsernameParams) (*Users, error)
 }
 

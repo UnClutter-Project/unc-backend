@@ -103,6 +103,6 @@ func (c *AuthControllerImpl) Verify(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": fmt.Sprintf("User %s has been verified", verifyRequest.Username),
+		"message": fmt.Sprintf("User is now verified"),
 	})
 }

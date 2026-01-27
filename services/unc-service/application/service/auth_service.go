@@ -86,22 +86,14 @@ func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginReque
 }
 
 func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyRequest) error {
-	user, err := s.repository.GetUserByUsername(ctx, request.Username)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.repository.GetValidOTPByUsernameAndCode(ctx, &repository.GetValidOTPByUsernameAndCodeParams{
-		UserID: user.ID,
-		Code:   request.Code,
-	})
+	otp, err := s.repository.GetValidOTPByCode(ctx, request.Code)
 	if err != nil {
 		return err
 	}
 
 	_, err = s.repository.SetIsVerifiedByUsername(ctx, &repository.SetIsVerifiedByUsernameParams{
 		IsVerified: true,
-		Username:   request.Username,
+		Username:   otp.UserID.String(),
 	})
 	if err != nil {
 		return err
