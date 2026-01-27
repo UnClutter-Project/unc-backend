@@ -32,8 +32,9 @@ func NewApp() *App {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
+	fmt.Println(config.GetConfig().CorsAllowedOrigin)
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost",
+		AllowOrigins:     config.GetConfig().CorsAllowedOrigin,
 		AllowCredentials: true, //Very important while using a HTTPonly Cookie, frontend can easily get and return back the cookie.
 	}))
 

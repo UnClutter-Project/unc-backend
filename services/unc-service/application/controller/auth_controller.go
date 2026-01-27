@@ -1,13 +1,16 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"time"
+	"unc/services/unc-service/application/helper"
 	"unc/services/unc-service/application/service"
 	"unc/services/unc-service/domain/request"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthController interface {
@@ -181,19 +184,20 @@ func (c *AuthControllerImpl) Refresh(ctx *fiber.Ctx) error {
 }
 
 func (c *AuthControllerImpl) Logout(ctx *fiber.Ctx) error {
-	// token :=
-	// if token == nil {
-	// 	return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
-	// 		"error": errors.New("invalid credentials"),
-	// 	})
-	// }
-	// user_id := helper.GetUserFromJwt(helper.GetTokenFromCtx(ctx))
-	// fmt.Println(user_id)
-	// if err := c.authService.Logout(ctx.Context(), user_id); err != nil {
-	// 	return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": err.Error(),
-	// 	})
-	// }
+	token := ctx.Locals("user").(*jwt.Token)
+	fmt.Print(token)
+	if token == nil {
+		return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": errors.New("invalid credentials"),
+		})
+	}
+	user_id := helper.GetUserFromJwt(token)
+	fmt.Println(user_id)
+	if err := c.authService.Logout(ctx.Context(), user_id); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 
 	cookie := fiber.Cookie{
 		Name:     "token",

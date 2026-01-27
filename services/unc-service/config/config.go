@@ -11,13 +11,15 @@ import (
 )
 
 type Config struct {
-	AppPort          string `env:"APP_PORT" envDefault:"8080"`
-	DatabaseHost     string `env:"DATABASE_HOST" envDefault:"localhost"`
-	DatabasePort     string `env:"DATABASE_PORT" envDefault:"5432"`
-	DatabaseName     string `env:"DATABASE_NAME" envDefault:"unc_db"`
-	DatabaseUser     string `env:"DATABASE_USER" envDefault:"postgres"`
-	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
-	BrevoAPIKey      string `env:"BREVO_API_KEY" envDefault:""`
+	AppPort           string `env:"APP_PORT" envDefault:"8080"`
+	DatabaseHost      string `env:"DATABASE_HOST" envDefault:"localhost"`
+	DatabasePort      string `env:"DATABASE_PORT" envDefault:"5432"`
+	DatabaseName      string `env:"DATABASE_NAME" envDefault:"unc_db"`
+	DatabaseUser      string `env:"DATABASE_USER" envDefault:"postgres"`
+	DatabasePassword  string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
+	BrevoAPIKey       string `env:"BREVO_API_KEY" envDefault:""`
+	JWTSecret         string `env:"JWT_SECRET" envDefault:""`
+	CorsAllowedOrigin string `env:"CORS_ALLOWED_ORIGIN" envDefault:""`
 }
 
 var (

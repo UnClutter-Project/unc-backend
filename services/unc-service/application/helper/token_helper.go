@@ -2,8 +2,8 @@ package helper
 
 import (
 	"fmt"
-	"os"
 	"time"
+	"unc/services/unc-service/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -39,7 +39,7 @@ func GenerateRefreshToken(id string) (string, error) {
 
 func VerifyAndParseToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(config.GetConfig().JWTSecret), nil
 	})
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func VerifyAndParseToken(tokenString string) (*jwt.Token, error) {
 func generateJwt(claims jwt.MapClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	t, err := token.SignedString([]byte(config.GetConfig().JWTSecret))
 	if err != nil {
 		return "", err
 	}

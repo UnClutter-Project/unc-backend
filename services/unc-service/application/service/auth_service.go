@@ -176,11 +176,12 @@ func (s *AuthServiceImpl) Logout(ctx context.Context, user_id string) error {
 	if user_id == "" {
 		return errors.New("invalid user")
 	}
-	uuid := pgtype.UUID{}
-	if err := uuid.Scan(user_id); err != nil {
+	var pgUUID pgtype.UUID
+	err := pgUUID.Scan(user_id)
+	if err != nil {
 		return err
 	}
-	_, err := s.repository.GetUserById(ctx, uuid)
+	_, err = s.repository.GetUserById(ctx, pgUUID)
 
 	if err != nil {
 		return err
