@@ -13,7 +13,16 @@ require (
 )
 
 require (
+	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect
 	github.com/antihax/optional v1.0.0 // indirect
+	github.com/gofiber/fiber/v3 v3.0.0-rc.2 // indirect
+	github.com/gofiber/jwt/v3 v3.3.10 // indirect
+	github.com/gofiber/schema v1.6.0 // indirect
+	github.com/gofiber/utils/v2 v2.0.0-rc.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/philhofer/fwd v1.2.0 // indirect
+	github.com/tinylib/msgp v1.4.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 )
 
@@ -24,6 +33,8 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/gofiber/contrib/jwt v1.1.2
+	github.com/gofiber/contrib/v3/jwt v1.0.0-rc.1
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
