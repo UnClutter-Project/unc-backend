@@ -21,3 +21,12 @@ type LoginRequest struct {
 type VerifyRequest struct {
 	Code string `json:"code" validate:"required,len=6"`
 }
+
+type RefreshRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type LogoutRequest struct {
+	Token        string `json:"token" validate:"required"`
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}

@@ -6,11 +6,14 @@ package repository
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
 	CreateOTP(ctx context.Context, arg *CreateOTPParams) (*Otp, error)
 	CreateUser(ctx context.Context, arg *CreateUserParams) (*Users, error)
+	GetUserById(ctx context.Context, id pgtype.UUID) (*Users, error)
 	GetUserByUsername(ctx context.Context, username string) (*Users, error)
 	GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error)
 	GetValidOTPByCode(ctx context.Context, code string) (*Otp, error)

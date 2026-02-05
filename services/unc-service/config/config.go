@@ -18,6 +18,8 @@ type Config struct {
 	DatabaseUser          string `env:"DATABASE_USER" envDefault:"postgres"`
 	DatabasePassword      string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
 	BrevoAPIKey           string `env:"BREVO_API_KEY" envDefault:""`
+	JWTSecret             string `env:"JWT_SECRET" envDefault:""`
+	CorsAllowedOrigin     string `env:"CORS_ALLOWED_ORIGIN" envDefault:""`
 	ClientEndpoint        string `env:"CLIENT_ENDPOINT" envDefault:"http://localhost:3000"`
 	ClientEmailVerifyPath string `env:"CLIENT_EMAIL_VERIFY_PATH" envDefault:"/verify"`
 }
