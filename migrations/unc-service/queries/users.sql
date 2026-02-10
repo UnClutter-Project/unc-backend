@@ -13,7 +13,7 @@ WHERE username = $1 LIMIT 1;
 
 -- name: SetIsVerifiedByUsername :one
 UPDATE users SET is_verified = $1
-WHERE username = $2
+WHERE id = $2
 RETURNING *;
 
 -- name: GetUserById :one

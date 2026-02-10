@@ -126,26 +126,18 @@ func (c *AuthControllerImpl) Verify(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": fmt.Sprintf("User %s has been verified", verifyRequest.Username),
+		"message": fmt.Sprintf("User is now verified"),
 	})
 }
 
 func (c *AuthControllerImpl) Refresh(ctx *fiber.Ctx) error {
 	var refreshRequest request.RefreshRequest
-	// fmt.Println(ctx.Cookies("token"))
-	// fmt.Println(ctx.Cookies("refresh_token"))
 
 	if err := ctx.BodyParser(&refreshRequest); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
-
-	// if err := c.validator.StructCtx(ctx.Context(), &refreshRequest); err != nil {
-	// 	return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-	// 		"error": err.Error(),
-	// 	})
-	// }
 
 	if refreshRequest.RefreshToken == "" {
 		refreshRequest.RefreshToken = ctx.Cookies("refresh_token")

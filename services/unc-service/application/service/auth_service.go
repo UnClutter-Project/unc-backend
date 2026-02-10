@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"unc/services/unc-service/application/client"
 	"unc/services/unc-service/application/helper"
+	"unc/services/unc-service/config"
 	"unc/services/unc-service/domain/repository"
 	"unc/services/unc-service/domain/request"
 
@@ -102,22 +103,14 @@ func (s *AuthServiceImpl) Login(ctx context.Context, request *request.LoginReque
 }
 
 func (s *AuthServiceImpl) Verify(ctx context.Context, request *request.VerifyRequest) error {
-	user, err := s.repository.GetUserByUsername(ctx, request.Username)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.repository.GetValidOTPByUsernameAndCode(ctx, &repository.GetValidOTPByUsernameAndCodeParams{
-		UserID: user.ID,
-		Code:   request.Code,
-	})
+	otp, err := s.repository.GetValidOTPByCode(ctx, request.Code)
 	if err != nil {
 		return err
 	}
 
 	_, err = s.repository.SetIsVerifiedByUsername(ctx, &repository.SetIsVerifiedByUsernameParams{
 		IsVerified: true,
-		Username:   request.Username,
+		ID:         otp.UserID,
 	})
 	if err != nil {
 		return err
@@ -137,7 +130,13 @@ func (s *AuthServiceImpl) sendOTP(ctx context.Context, user *repository.Users) e
 		Code:   code,
 	})
 
-	err = s.emailClient.SendOTP(ctx, user.Email, user.Email, fmt.Sprintf("Take it or leave it: %s", code))
+	err = s.emailClient.SendOTP(ctx, user.Email, user.Email,
+		fmt.Sprintf(
+			"Take it or leave it: %s%s?code=%s",
+			config.GetConfig().ClientEndpoint,
+			config.GetConfig().ClientEmailVerifyPath,
+			code,
+		))
 	if err != nil {
 		return err
 	}
