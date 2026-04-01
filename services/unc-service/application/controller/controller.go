@@ -7,11 +7,13 @@ import (
 )
 
 type Controllers struct {
-	AuthController AuthController
+	AuthController     AuthController
+	ClothingController ClothingController
 }
 
 func SetupControllers(services *service.Services, validator *validator.Validate) *Controllers {
 	return &Controllers{
-		AuthController: NewAuthController(services.AuthService, validator),
+		AuthController:     NewAuthController(services.AuthService, validator),
+		ClothingController: NewClothingController(services.ClothingService, validator),
 	}
 }
