@@ -54,6 +54,48 @@ func (ns NullGenderType) Value() (driver.Value, error) {
 	return string(ns.GenderType), nil
 }
 
+type Clothing struct {
+	ID                 pgtype.UUID        `json:"id"`
+	UserID             pgtype.UUID        `json:"user_id"`
+	MainColor1ID       pgtype.UUID        `json:"main_color_1_id"`
+	MainColor2ID       pgtype.UUID        `json:"main_color_2_id"`
+	AccentColorID      pgtype.UUID        `json:"accent_color_id"`
+	ClothingCategoryID pgtype.UUID        `json:"clothing_category_id"`
+	ClothingTypeID     pgtype.UUID        `json:"clothing_type_id"`
+	Brand              pgtype.Text        `json:"brand"`
+	Style              pgtype.Text        `json:"style"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt          pgtype.Timestamptz `json:"updated_at"`
+	DeletedAt          pgtype.Timestamptz `json:"deleted_at"`
+}
+
+type ClothingCategory struct {
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	Value     string             `json:"value"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+}
+
+type ClothingType struct {
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	Value     string             `json:"value"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
+}
+
+type Color struct {
+	ID             pgtype.UUID        `json:"id"`
+	HexValue       string             `json:"hex_value"`
+	ColorGroupName string             `json:"color_group_name"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+	DeletedAt      pgtype.Timestamptz `json:"deleted_at"`
+}
+
 type Otp struct {
 	ID        pgtype.UUID        `json:"id"`
 	UserID    pgtype.UUID        `json:"user_id"`
