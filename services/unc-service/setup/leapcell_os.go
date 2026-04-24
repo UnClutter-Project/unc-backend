@@ -14,8 +14,8 @@ func setupObjectStorage(ctx context.Context) *s3.Client {
 	cfg, err := awsconfig.LoadDefaultConfig(ctx,
 		awsconfig.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(
-				config.GetConfig().LeapcellAccessID,
-				config.GetConfig().LeapcellAccessSecret,
+				config.GetConfig().ObjectStorageAccessID,
+				config.GetConfig().ObjectStorageAccessSecret,
 				""),
 		),
 		awsconfig.WithRegion("us-east-1"),
