@@ -39,7 +39,7 @@ func NewApp() *App {
 
 	db := setupDB(ctx)
 	repository := setupRepository(db)
-	storage := setupR2(ctx)
+	storage := setupObjectStorage(ctx)
 
 	clients := client.SetupClients(storage)
 	services := service.SetupServices(repository, clients)

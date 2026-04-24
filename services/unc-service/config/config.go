@@ -12,22 +12,21 @@ import (
 )
 
 type Config struct {
-	AppPort                string        `env:"APP_PORT" envDefault:"8080"`
-	CorsAllowedOrigin      string        `env:"CORS_ALLOWED_ORIGIN" envDefault:""`
-	JWTSecret              string        `env:"JWT_SECRET" envDefault:""`
-	DatabaseHost           string        `env:"DATABASE_HOST" envDefault:"localhost"`
-	DatabasePort           string        `env:"DATABASE_PORT" envDefault:"5432"`
-	DatabaseName           string        `env:"DATABASE_NAME" envDefault:"unc_db"`
-	DatabaseUser           string        `env:"DATABASE_USER" envDefault:"postgres"`
-	DatabasePassword       string        `env:"DATABASE_PASSWORD" envDefault:"postgres"`
-	BrevoAPIKey            string        `env:"BREVO_API_KEY" envDefault:""`
-	ClientEndpoint         string        `env:"CLIENT_ENDPOINT" envDefault:"http://localhost:3000"`
-	ClientEmailVerifyPath  string        `env:"CLIENT_EMAIL_VERIFY_PATH" envDefault:"/verify"`
-	CloudflareID           string        `env:"CLOUDFLARE_ID" envDefault:""`
-	CloudflareAccessID     string        `env:"CLOUDFLARE_ACCESS_ID" envDefault:""`
-	CloudflareAccessSecret string        `env:"CLOUDFLARE_ACCESS_SECRET" envDefault:""`
-	BucketName             string        `env:"BUCKET_NAME" envDefault:"unc"`
-	PresignDuration        time.Duration `env:"PRESIGN_DURATION" envDefault:"15m"`
+	AppPort               string        `env:"APP_PORT" envDefault:"8080"`
+	CorsAllowedOrigin     string        `env:"CORS_ALLOWED_ORIGIN" envDefault:""`
+	JWTSecret             string        `env:"JWT_SECRET" envDefault:""`
+	DatabaseHost          string        `env:"DATABASE_HOST" envDefault:"localhost"`
+	DatabasePort          string        `env:"DATABASE_PORT" envDefault:"5432"`
+	DatabaseName          string        `env:"DATABASE_NAME" envDefault:"unc_db"`
+	DatabaseUser          string        `env:"DATABASE_USER" envDefault:"postgres"`
+	DatabasePassword      string        `env:"DATABASE_PASSWORD" envDefault:"postgres"`
+	BrevoAPIKey           string        `env:"BREVO_API_KEY" envDefault:""`
+	ClientEndpoint        string        `env:"CLIENT_ENDPOINT" envDefault:"http://localhost:3000"`
+	ClientEmailVerifyPath string        `env:"CLIENT_EMAIL_VERIFY_PATH" envDefault:"/verify"`
+	LeapcellAccessID      string        `env:"LEAPCELL_OS_ACCESS_ID" envDefault:""`
+	LeapcellAccessSecret  string        `env:"LEAPCELL_OS_ACCESS_SECRET" envDefault:""`
+	BucketName            string        `env:"BUCKET_NAME" envDefault:"unc"`
+	PresignDuration       time.Duration `env:"PRESIGN_DURATION" envDefault:"15m"`
 }
 
 var (
@@ -40,7 +39,7 @@ func GetConfig() *Config {
 		_, filename, _, _ := runtime.Caller(0)
 		dir := filepath.Dir(filename)
 		parentDir := filepath.Dir(dir)
-		envPath := filepath.Join(parentDir, ".env")
+		envPath := filepath.Join(parentDir, ".env.dev")
 
 		if err := godotenv.Load(envPath); err != nil {
 			log.Printf("Warning error loading .env file: %v", err)
