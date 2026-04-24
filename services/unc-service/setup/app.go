@@ -39,7 +39,9 @@ func NewApp() *App {
 
 	db := setupDB(ctx)
 	repository := setupRepository(db)
-	clients := client.SetupClients()
+	storage := setupObjectStorage(ctx)
+
+	clients := client.SetupClients(storage)
 	services := service.SetupServices(repository, clients)
 	controllers := controller.SetupControllers(services, validator.New())
 	router.SetupRoutes(app, controllers)
