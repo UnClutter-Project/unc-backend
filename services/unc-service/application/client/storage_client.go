@@ -3,14 +3,15 @@ package client
 import (
 	"bytes"
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type StorageClient interface{}
+type StorageClient interface {
+	UploadFile(ctx context.Context, fileKey string, fileData []byte) (string, error)
+}
 
 type StorageClientImpl struct {
 	s3Client        *s3.Client
@@ -30,10 +31,9 @@ func NewStorageClient(s3Client *s3.Client, bucketName string, presignDuration ti
 
 func (c *StorageClientImpl) UploadFile(ctx context.Context, fileKey string, fileData []byte) (string, error) {
 	_, err := c.s3Client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(c.bucketName),
-		Key:         aws.String(fileKey),
-		Body:        bytes.NewReader(fileData),
-		ContentType: aws.String(http.DetectContentType(fileData[:512])),
+		Bucket: aws.String(c.bucketName),
+		Key:    aws.String(fileKey),
+		Body:   bytes.NewReader(fileData),
 	})
 	if err != nil {
 		return "", err

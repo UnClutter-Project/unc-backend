@@ -26,6 +26,7 @@ type Config struct {
 	ObjectStorageAccessID     string        `env:"OBJECT_STORAGE_ACCESS_ID" envDefault:""`
 	ObjectStorageAccessSecret string        `env:"OBJECT_STORAGE_ACCESS_SECRET" envDefault:""`
 	BucketName                string        `env:"BUCKET_NAME" envDefault:"unc"`
+	BucketLink                string        `env:"BUCKET_LINK" envDefault:"unc"`
 	PresignDuration           time.Duration `env:"PRESIGN_DURATION" envDefault:"15m"`
 }
 

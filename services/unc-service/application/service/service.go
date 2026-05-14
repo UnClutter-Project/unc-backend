@@ -13,6 +13,6 @@ type Services struct {
 func SetupServices(repository repository.Querier, clients *client.Clients) *Services {
 	return &Services{
 		AuthService:     NewAuthService(repository, clients.EmailClient),
-		ClothingService: NewClothingService(repository),
+		ClothingService: NewClothingService(repository, clients.StorageClient),
 	}
 }
