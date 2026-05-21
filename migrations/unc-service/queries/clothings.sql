@@ -14,37 +14,17 @@ INSERT INTO color (
 )
 RETURNING *;
 
--- name: GetClothingCategoryByValueAndUserID :one
+-- name: GetClothingCategoryByValue :one
 SELECT * FROM clothing_category
-WHERE user_id = $1
-  AND value = $2
+WHERE value = $1
   AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: CreateClothingCategory :one
 INSERT INTO clothing_category (
-    user_id,
     value
 ) VALUES (
-    $1,
-    $2
-)
-RETURNING *;
-
--- name: GetClothingTypeByValueAndUserID :one
-SELECT * FROM clothing_type
-WHERE user_id = $1
-  AND value = $2
-  AND deleted_at IS NULL
-LIMIT 1;
-
--- name: CreateClothingType :one
-INSERT INTO clothing_type (
-    user_id,
-    value
-) VALUES (
-    $1,
-    $2
+    $1
 )
 RETURNING *;
 

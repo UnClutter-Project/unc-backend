@@ -72,11 +72,10 @@ func (s *ClothingServiceImpl) CreateClothing(ctx context.Context, user_id string
 		return fmt.Errorf("failed to resolve category: %w", err)
 	}
 
-	imageLink, err := s.uploadImageToS3(ctx, req.Image)
+	fileKey, err := s.uploadImageToS3(ctx, req.Image)
 	if err != nil {
 		return fmt.Errorf("failed to upload image: %w", err)
 	}
-	fmt.Println(imageLink)
 
 	_, err = s.repository.CreateClothing(ctx, &repository.CreateClothingParams{
 		UserID:             user.ID,
@@ -84,9 +83,9 @@ func (s *ClothingServiceImpl) CreateClothing(ctx context.Context, user_id string
 		MainColor2ID:       mainColor2ID,
 		AccentColorID:      accentColorID,
 		ClothingCategoryID: category.ID,
-		Brand:              pgtype.Text{String: req.Brand},
-		Style:              pgtype.Text{String: req.Style},
-		ImageLink:          pgtype.Text{String: imageLink, Valid: true},
+		Brand:              pgtype.Text{String: req.Brand, Valid: true},
+		Style:              pgtype.Text{String: req.Style, Valid: true},
+		ImageLink:          pgtype.Text{String: fileKey, Valid: true},
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create clothing: %w", err)
@@ -96,10 +95,7 @@ func (s *ClothingServiceImpl) CreateClothing(ctx context.Context, user_id string
 }
 
 func (s *ClothingServiceImpl) findOrCreateCategory(ctx context.Context, user_id pgtype.UUID, category string) (*repository.ClothingCategory, error) {
-	exist_category, err := s.repository.GetClothingCategoryByValueAndUserID(ctx, &repository.GetClothingCategoryByValueAndUserIDParams{
-		UserID: user_id,
-		Value:  category,
-	})
+	exist_category, err := s.repository.GetClothingCategoryByValue(ctx, category)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return nil, err
 	}
@@ -107,10 +103,7 @@ func (s *ClothingServiceImpl) findOrCreateCategory(ctx context.Context, user_id 
 		return exist_category, nil
 	}
 
-	new_category, err := s.repository.CreateClothingCategory(ctx, &repository.CreateClothingCategoryParams{
-		UserID: user_id,
-		Value:  category,
-	})
+	new_category, err := s.repository.CreateClothingCategory(ctx, category)
 	if err != nil {
 		return nil, err
 	}
@@ -159,8 +152,6 @@ func (s *ClothingServiceImpl) uploadImageToS3(ctx context.Context, file *multipa
 	if err != nil {
 		return "", fmt.Errorf("failed to upload image to S3: %w", err)
 	}
-	imageLink, err := s.storageClient.DownloadFile(ctx, fileKey)
-	// imageLink = config.GetConfig().BucketLink + "/" + imageLink
 
-	return imageLink, nil
+	return fileKey, nil
 }

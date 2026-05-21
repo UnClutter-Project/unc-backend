@@ -81,56 +81,18 @@ func (q *Queries) CreateClothing(ctx context.Context, arg *CreateClothingParams)
 
 const createClothingCategory = `-- name: CreateClothingCategory :one
 INSERT INTO clothing_category (
-    user_id,
     value
 ) VALUES (
-    $1,
-    $2
+    $1
 )
-RETURNING id, user_id, value, created_at, updated_at, deleted_at
+RETURNING id, value, created_at, updated_at, deleted_at
 `
 
-type CreateClothingCategoryParams struct {
-	UserID pgtype.UUID `json:"user_id"`
-	Value  string      `json:"value"`
-}
-
-func (q *Queries) CreateClothingCategory(ctx context.Context, arg *CreateClothingCategoryParams) (*ClothingCategory, error) {
-	row := q.db.QueryRow(ctx, createClothingCategory, arg.UserID, arg.Value)
+func (q *Queries) CreateClothingCategory(ctx context.Context, value string) (*ClothingCategory, error) {
+	row := q.db.QueryRow(ctx, createClothingCategory, value)
 	var i ClothingCategory
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
-		&i.Value,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-	)
-	return &i, err
-}
-
-const createClothingType = `-- name: CreateClothingType :one
-INSERT INTO clothing_type (
-    user_id,
-    value
-) VALUES (
-    $1,
-    $2
-)
-RETURNING id, user_id, value, created_at, updated_at, deleted_at
-`
-
-type CreateClothingTypeParams struct {
-	UserID pgtype.UUID `json:"user_id"`
-	Value  string      `json:"value"`
-}
-
-func (q *Queries) CreateClothingType(ctx context.Context, arg *CreateClothingTypeParams) (*ClothingType, error) {
-	row := q.db.QueryRow(ctx, createClothingType, arg.UserID, arg.Value)
-	var i ClothingType
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
 		&i.Value,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -169,52 +131,18 @@ func (q *Queries) CreateColor(ctx context.Context, arg *CreateColorParams) (*Col
 	return &i, err
 }
 
-const getClothingCategoryByValueAndUserID = `-- name: GetClothingCategoryByValueAndUserID :one
-SELECT id, user_id, value, created_at, updated_at, deleted_at FROM clothing_category
-WHERE user_id = $1
-  AND value = $2
+const getClothingCategoryByValue = `-- name: GetClothingCategoryByValue :one
+SELECT id, value, created_at, updated_at, deleted_at FROM clothing_category
+WHERE value = $1
   AND deleted_at IS NULL
 LIMIT 1
 `
 
-type GetClothingCategoryByValueAndUserIDParams struct {
-	UserID pgtype.UUID `json:"user_id"`
-	Value  string      `json:"value"`
-}
-
-func (q *Queries) GetClothingCategoryByValueAndUserID(ctx context.Context, arg *GetClothingCategoryByValueAndUserIDParams) (*ClothingCategory, error) {
-	row := q.db.QueryRow(ctx, getClothingCategoryByValueAndUserID, arg.UserID, arg.Value)
+func (q *Queries) GetClothingCategoryByValue(ctx context.Context, value string) (*ClothingCategory, error) {
+	row := q.db.QueryRow(ctx, getClothingCategoryByValue, value)
 	var i ClothingCategory
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
-		&i.Value,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-	)
-	return &i, err
-}
-
-const getClothingTypeByValueAndUserID = `-- name: GetClothingTypeByValueAndUserID :one
-SELECT id, user_id, value, created_at, updated_at, deleted_at FROM clothing_type
-WHERE user_id = $1
-  AND value = $2
-  AND deleted_at IS NULL
-LIMIT 1
-`
-
-type GetClothingTypeByValueAndUserIDParams struct {
-	UserID pgtype.UUID `json:"user_id"`
-	Value  string      `json:"value"`
-}
-
-func (q *Queries) GetClothingTypeByValueAndUserID(ctx context.Context, arg *GetClothingTypeByValueAndUserIDParams) (*ClothingType, error) {
-	row := q.db.QueryRow(ctx, getClothingTypeByValueAndUserID, arg.UserID, arg.Value)
-	var i ClothingType
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
 		&i.Value,
 		&i.CreatedAt,
 		&i.UpdatedAt,
