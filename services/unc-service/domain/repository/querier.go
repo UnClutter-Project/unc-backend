@@ -11,8 +11,13 @@ import (
 )
 
 type Querier interface {
+	CreateClothing(ctx context.Context, arg *CreateClothingParams) (*Clothing, error)
+	CreateClothingCategory(ctx context.Context, value string) (*ClothingCategory, error)
+	CreateColor(ctx context.Context, arg *CreateColorParams) (*Color, error)
 	CreateOTP(ctx context.Context, arg *CreateOTPParams) (*Otp, error)
 	CreateUser(ctx context.Context, arg *CreateUserParams) (*Users, error)
+	GetClothingCategoryByValue(ctx context.Context, value string) (*ClothingCategory, error)
+	GetColorByHex(ctx context.Context, hexValue string) (*Color, error)
 	GetUserById(ctx context.Context, id pgtype.UUID) (*Users, error)
 	GetUserByUsername(ctx context.Context, username string) (*Users, error)
 	GetUserByUsernameAndEmail(ctx context.Context, arg *GetUserByUsernameAndEmailParams) (*Users, error)
