@@ -1,74 +1,55 @@
 -- name: GetColorByHex :one
-SELECT * FROM colors
+SELECT * FROM color
 WHERE hex_value = $1
   AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: CreateColor :one
-INSERT INTO colors (
-    id,
+INSERT INTO color (
     hex_value,
-    color_group_name,
-    created_at,
-    updated_at
+    color_group_name
 ) VALUES (
-    gen_random_uuid(),
     $1,
-    $2,
-    NOW(),
-    NOW()
+    $2
 )
 RETURNING *;
 
 -- name: GetClothingCategoryByValueAndUserID :one
-SELECT * FROM clothing_categories
+SELECT * FROM clothing_category
 WHERE user_id = $1
   AND value = $2
   AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: CreateClothingCategory :one
-INSERT INTO clothing_categories (
-    id,
+INSERT INTO clothing_category (
     user_id,
-    value,
-    created_at,
-    updated_at
+    value
 ) VALUES (
-    gen_random_uuid(),
     $1,
-    $2,
-    NOW(),
-    NOW()
+    $2
 )
 RETURNING *;
 
 -- name: GetClothingTypeByValueAndUserID :one
-SELECT * FROM clothing_types
+SELECT * FROM clothing_type
 WHERE user_id = $1
   AND value = $2
   AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: CreateClothingType :one
-INSERT INTO clothing_types (
-    id,
+INSERT INTO clothing_type (
     user_id,
-    value,
-    created_at,
-    updated_at
+    value
 ) VALUES (
-    gen_random_uuid(),
     $1,
-    $2,
-    NOW(),
-    NOW()
+    $2
 )
 RETURNING *;
 
 -- name: CreateClothing :one
-INSERT INTO clothings (
-    id,
+INSERT INTO clothing (
     user_id,
     main_color_1_id,
     main_color_2_id,
@@ -77,11 +58,8 @@ INSERT INTO clothings (
     clothing_type_id,
     brand,
     style,
-    image_link,
-    created_at,
-    updated_at
+    image_link
 ) VALUES (
-    gen_random_uuid(),
     $1,
     $2,
     $3,
@@ -90,8 +68,6 @@ INSERT INTO clothings (
     $6,
     $7,
     $8,
-    $9,
-    NOW(),
-    NOW()
+    $9
 )
 RETURNING *;

@@ -59,7 +59,6 @@ func generateJwt(claims jwt.MapClaims) (string, error) {
 }
 
 func GetUserFromJwt(token *jwt.Token) string {
-	fmt.Println(token)
 	claims := token.Claims.(jwt.MapClaims)
 	user_id, ok := claims["user_id"].(string) // Ensure the key matches your token generation
 	if !ok {
