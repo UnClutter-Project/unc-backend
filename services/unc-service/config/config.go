@@ -23,6 +23,7 @@ type Config struct {
 	BrevoAPIKey               string        `env:"BREVO_API_KEY" envDefault:""`
 	ClientEndpoint            string        `env:"CLIENT_ENDPOINT" envDefault:"http://localhost:3000"`
 	ClientEmailVerifyPath     string        `env:"CLIENT_EMAIL_VERIFY_PATH" envDefault:"/verify"`
+	CloudflareID              string        `env:"CLOUDFLARE_ID" envDefault:""`
 	ObjectStorageAccessID     string        `env:"OBJECT_STORAGE_ACCESS_ID" envDefault:""`
 	ObjectStorageAccessSecret string        `env:"OBJECT_STORAGE_ACCESS_SECRET" envDefault:""`
 	BucketName                string        `env:"BUCKET_NAME" envDefault:"unc"`

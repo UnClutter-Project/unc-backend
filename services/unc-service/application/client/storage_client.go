@@ -11,6 +11,7 @@ import (
 
 type StorageClient interface {
 	UploadFile(ctx context.Context, fileKey string, fileData []byte) (string, error)
+	GetPresignedLink(ctx context.Context, fileKey string) (string, error)
 }
 
 type StorageClientImpl struct {
@@ -42,7 +43,7 @@ func (c *StorageClientImpl) UploadFile(ctx context.Context, fileKey string, file
 	return fileKey, nil
 }
 
-func (c *StorageClientImpl) DownloadFile(ctx context.Context, fileKey string) (string, error) {
+func (c *StorageClientImpl) GetPresignedLink(ctx context.Context, fileKey string) (string, error) {
 	file, err := c.s3PresignClient.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(c.bucketName),
 		Key:    aws.String(fileKey),
