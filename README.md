@@ -18,16 +18,31 @@ Project Repository for the virtual wardrobe application UnClutter.
 ### Initialize .env
 ```Copy .env.example as .env and fill in the required values```
 
-### Run the app
-```go run ./services/unc-service/```
+### Changing environment
+```Change dotenv value in Taskfile.yml to .env.dev for dev environment as example```
 
-## Migration
+### Run the app
+```task dev```
+
+### Build the app and run
+```task build & task run```
+
+### Test the app
+```task test```
+
+## Manual migration
+
+### Migrate create
+```task migrate:create -- <migration_name>```
 
 ### Migrate up
-```goose -dir migrations/unc-service/schema postgres "user=postgres password=<db_password> dbname=unc_db sslmode=disable" up```
+```task migrate:up```
 
 ### Migrate down
-```goose -dir migrations/unc-service/schema postgres "user=postgres password=<db_password> dbname=unc_db sslmode=disable" down```
+```task migrate:down -- <migration_number>```
 
-### Create migration
-```goose -s -dir migrations/unc-service/schema create <migration_name> sql```
+### Migrate up-to
+```task migrate:up-to -- <migration_number>```
+
+### Migrate down-to
+```task migrate:down-to```
