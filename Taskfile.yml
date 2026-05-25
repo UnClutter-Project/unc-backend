@@ -1,0 +1,41 @@
+version: '3'
+
+dotenv: ['services/unc-service/.env']
+
+vars:
+  UNC_MIGRATIONS: migrations/unc-service/schema
+
+tasks:
+  generate:
+    dir: services/unc-service
+    cmd: sqlc generate
+
+  dev:
+    deps: [generate]
+    cmd: air
+
+  build:
+    deps: [generate]
+    cmd: go build -o bin/unc-service/app.exe ./services/unc-service
+
+  run:
+    deps: [build]
+    cmd: ./bin/unc-service/app.exe
+
+  test:
+    cmd: go test ./...
+
+  migrate:up:
+    cmd: goose -dir {{.UNC_MIGRATIONS}} postgres "user={{.DATABASE_USER}} password={{.DATABASE_PASSWORD}} host={{.DATABASE_HOST}} port={{.DATABASE_PORT}} dbname={{.DATABASE_NAME}} sslmode=prefer" up
+
+  migrate:down:
+    cmd: goose -dir {{.UNC_MIGRATIONS}} postgres "user={{.DATABASE_USER}} password={{.DATABASE_PASSWORD}} host={{.DATABASE_HOST}} port={{.DATABASE_PORT}} dbname={{.DATABASE_NAME}} sslmode=prefer" down
+
+  migrate:up-to:
+    cmd: goose -dir {{.UNC_MIGRATIONS}} postgres "user={{.DATABASE_USER}} password={{.DATABASE_PASSWORD}} host={{.DATABASE_HOST}} port={{.DATABASE_PORT}} dbname={{.DATABASE_NAME}} sslmode=prefer" up-to {{.CLI_ARGS}}
+
+  migrate:down-to:
+    cmd: goose -dir {{.UNC_MIGRATIONS}} postgres "user={{.DATABASE_USER}} password={{.DATABASE_PASSWORD}} host={{.DATABASE_HOST}} port={{.DATABASE_PORT}} dbname={{.DATABASE_NAME}} sslmode=prefer" down-to {{.CLI_ARGS}}
+
+  migrate:create:
+    cmd: goose -s -dir {{.UNC_MIGRATIONS}} create {{.CLI_ARGS}} sql

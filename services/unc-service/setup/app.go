@@ -34,9 +34,10 @@ func NewApp() *App {
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     config.GetConfig().CorsAllowedOrigin,
-		AllowCredentials: true, //Very important while using a HTTPonly Cookie, frontend can easily get and return back the cookie.
+		AllowCredentials: true, // Very important while using a HTTPonly Cookie, frontend can easily get and return back the cookie.
 	}))
 
+	migrateGoose()
 	db := setupDB(ctx)
 	repository := setupRepository(db)
 	storage := setupR2ObjectStorage(ctx)
