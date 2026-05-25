@@ -37,6 +37,7 @@ func NewApp() *App {
 		AllowCredentials: true, // Very important while using a HTTPonly Cookie, frontend can easily get and return back the cookie.
 	}))
 
+	migrateGoose()
 	db := setupDB(ctx)
 	repository := setupRepository(db)
 	storage := setupR2ObjectStorage(ctx)
