@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+  dev:
+    cmd: air
+
+  build:
+    cmd: go build -o bin/unc-service/app.exe ./services/unc-service
+
+  run:
+    cmd: go run ./services/unc-service
+
+  test:
+    cmd: go test ./...
