@@ -40,7 +40,7 @@ func GetConfig() *Config {
 		_, filename, _, _ := runtime.Caller(0)
 		dir := filepath.Dir(filename)
 		parentDir := filepath.Dir(dir)
-		envPath := filepath.Join(parentDir, ".env.dev")
+		envPath := filepath.Join(parentDir, ".env")
 
 		if err := godotenv.Load(envPath); err != nil {
 			log.Printf("Warning error loading .env file: %v", err)
