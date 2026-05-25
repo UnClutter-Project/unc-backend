@@ -1,14 +1,21 @@
 version: '3'
 
 tasks:
+  generate:
+    dir: services/unc-service
+    cmd: sqlc generate
+
   dev:
+    deps: [generate]
     cmd: air
 
   build:
+    deps: [generate]
     cmd: go build -o bin/unc-service/app.exe ./services/unc-service
 
   run:
-    cmd: go run ./services/unc-service
+    deps: [build]
+    cmd: ./bin/unc-service/app.exe
 
   test:
     cmd: go test ./...
