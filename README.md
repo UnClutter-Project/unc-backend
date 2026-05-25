@@ -5,15 +5,15 @@ Project Repository for the virtual wardrobe application UnClutter.
 ## To-Get-Started
 
 ### Requirements
-- Golang 1.25.4
+- Golang 1.26
 - PostgreSQL 18.0
 
-### Install migration and code generation tool
+### Install migration, code generation, and hot-reload tool
 ```go install github.com/pressly/goose/v3/cmd/goose@latest```
 
 ```go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest```
 
-### Migrate up using the migration guide below
+```go install github.com/air-verse/air@latest```
 
 ### Initialize .env
 ```Copy .env.example as .env and fill in the required values```
